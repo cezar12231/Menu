@@ -1,0 +1,94 @@
+-- GUI principal
+local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "AutoFarmGUI"
+ScreenGui.ResetOnSpawn = false
+
+-- Janela arrastável
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 270, 0, 180)
+Frame.Position = UDim2.new(0.5, -135, 0.5, -90)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+
+-- Título
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "💸 Auto Farm Dinheiro"
+Title.TextColor3 = Color3.fromRGB(0, 255, 127)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+
+-- Créditos
+local Credit = Instance.new("TextLabel", Frame)
+Credit.Size = UDim2.new(1, 0, 0, 20)
+Credit.Position = UDim2.new(0, 0, 0, 30)
+Credit.BackgroundTransparency = 1
+Credit.Text = "by Cezar✌🏻"
+Credit.TextColor3 = Color3.fromRGB(200, 200, 200)
+Credit.Font = Enum.Font.Gotham
+Credit.TextSize = 13
+
+-- Caixa de texto
+local TextBox = Instance.new("TextBox", Frame)
+TextBox.PlaceholderText = "Digite o valor"
+TextBox.Size = UDim2.new(0, 220, 0, 35)
+TextBox.Position = UDim2.new(0.5, -110, 0, 60)
+TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.TextScaled = true
+TextBox.Font = Enum.Font.Gotham
+TextBox.Text = "1000"
+
+-- Botão de ativar
+local StartButton = Instance.new("TextButton", Frame)
+StartButton.Text = "▶️ Iniciar Auto Farm"
+StartButton.Size = UDim2.new(0, 220, 0, 35)
+StartButton.Position = UDim2.new(0.5, -110, 0, 105)
+StartButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+StartButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StartButton.TextScaled = true
+StartButton.Font = Enum.Font.Gotham
+
+-- Botão de parar
+local StopButton = Instance.new("TextButton", Frame)
+StopButton.Text = "⛔ Parar"
+StopButton.Size = UDim2.new(0, 100, 0, 25)
+StopButton.Position = UDim2.new(0.5, -50, 0, 145)
+StopButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+StopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopButton.TextScaled = true
+StopButton.Font = Enum.Font.Gotham
+
+-- Variável de controle
+local rodando = false
+
+-- Função do Auto Farm
+local function autoFarm()
+    while rodando do
+        local valor = tonumber(TextBox.Text)
+        if valor and valor > 0 then
+            local negativo = "-" .. tostring(math.abs(valor))
+            local args = {
+                [1] = negativo
+            }
+            game:GetService("ReplicatedStorage").CratesUtilities.Remotes.RemoveMoney:FireServer(unpack(args))
+        end
+        task.wait(0.05) -- muito rápido (20x por segundo)
+    end
+end
+
+-- Ativa o auto farm
+StartButton.MouseButton1Click:Connect(function()
+    if not rodando then
+        rodando = true
+        task.spawn(autoFarm)
+    end
+end)
+
+-- Para o auto farm
+StopButton.MouseButton1Click:Connect(function()
+    rodando = false
+end)
